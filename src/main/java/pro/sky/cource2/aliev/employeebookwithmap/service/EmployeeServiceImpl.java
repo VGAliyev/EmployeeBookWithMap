@@ -5,6 +5,7 @@ import pro.sky.cource2.aliev.employeebookwithmap.exception.EmployeeAlreadyAddedE
 import pro.sky.cource2.aliev.employeebookwithmap.exception.EmployeeNotFoundException;
 import pro.sky.cource2.aliev.employeebookwithmap.model.Employee;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee add(String firstName, String lastName) {
-        String fullName = firstName + " " + lastName;
+        String fullName = getFullName(firstName, lastName);
         if (employees.containsKey(fullName)) {
             throw new EmployeeAlreadyAddedException("Сотрудник " + fullName + " уже есть в системе!");
         }
@@ -25,7 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee remove(String firstName, String lastName) {
-        String fullName = firstName + " " + lastName;
+        String fullName = getFullName(firstName, lastName);
         if (!employees.containsKey(fullName)) {
             throw new EmployeeNotFoundException("Сотрудник " + fullName + " не найден в системе!");
         }
@@ -36,7 +37,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee find(String firstName, String lastName) {
-        String fullName = firstName + " " + lastName;
+        String fullName = getFullName(firstName, lastName);
         if (!employees.containsKey(fullName)) {
             throw new EmployeeNotFoundException("Сотрудник " + fullName + " не найден в системе!");
         }
@@ -45,6 +46,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Map<String, Employee> getEmployees() {
-        return employees;
+        return Collections.unmodifiableMap(employees); // Unmodifiable client copy
+    }
+
+    private static String getFullName(String firstName, String lastName) {
+        return firstName + " " + lastName;
     }
 }
